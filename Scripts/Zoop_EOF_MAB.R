@@ -64,61 +64,11 @@ all_dat <- ecomon_dat %>%
   arrange(species_number, year, lat, lon) %>%
   data.frame()
 
-######## AMO
-library(reshape2)
-amo<-read.table(file.path(rootdir,"amo.txt"), header=T)
-colnames(amo)<-c("year", 1:12)
-amo<-melt(amo, id.vars = "year", measure.vars =colnames(amo)[2:13])
-colnames(amo) =  c("year","month","index")
-amo$month<-as.integer(as.character(amo$month))
-
-all_dat$month <- cut(all_dat$day,
-                     breaks=c(1,31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365),
-                     labels = 1:12)
-all_dat$month = as.integer(as.character(all_dat$month))
-
-all_dat$amo<-NA
-
-for(i in 1:length(all_dat$year)){
-  year.i<-all_dat$year[i]
-  month.i<-all_dat$month[i]
-  all_dat$amo[i]<-amo$index[amo$year==year.i & amo$month==month.i]
-}
-
-########NAO
-
-nao<-read.csv(file.path(rootdir,"nao.csv"), header=F)
-nao<-nao[,c(4:6)]
-colnames(nao) =  c("year","month","index")
-
-all_dat$nao<-NA
-
-for(i in 1:length(all_dat$year)){
-  year.i<-all_dat$year[i]
-  month.i<-all_dat$month[i]
-  all_dat$nao[i]<-nao$index[nao$year==year.i & nao$month==month.i]
-}
-
-##############################
-all_dat$sfc_temp<-(all_dat$sfc_temp-mean(all_dat$sfc_temp, na.rm=T))/sd(all_dat$sfc_temp, na.rm=T)
-
-
-
-covariate_data <- data.frame(Year = all_dat$year,
-                             Lat = all_dat$lat,
-                             Lon = all_dat$lon,
-                             amo = all_dat$amo,
-                             nao = all_dat$nao,
-                             sfc = all_dat$sfc_temp)
-
-covariate_data<-covariate_data[complete.cases(covariate_data),]
-
-
-formula <- ~ sfc + I(sfc^2) + amo 
 
 #all_dat$catch_ab[all_dat$species_number==3 & all_dat$year %in% c(2000,2001,2003,2007,2009,2010,2014:2017)]<-NA
 #all_dat$catch_ab[all_dat$species_number==2 & all_dat$year==2003]<-NA
 strata.list = "EPU"
+
 #settings
 settings = make_settings( n_x = 1000,
                           Region = "northwest_atlantic",
@@ -152,8 +102,6 @@ fit = fit_model( settings=settings,
                  b_i= all_dat[, "catch_ab"],
                  a_i=all_dat[,'areaswept_km2'],
                  working_dir = rundir,
-                 covariate_data = covariate_data,
-                 X1_formula=formula,
                  anisotropy = FALSE, # corresponds to ln_H_input params
                  test_fit = FALSE,
                  newtonsteps = 0,
