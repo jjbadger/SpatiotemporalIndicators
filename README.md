@@ -1,2 +1,2 @@
 # SpatiotemporalIndicators
-This repository is acts as a supplement to the manuscript, Ecosystem-based management informed by spatiotemporal species distribution models: applications to indicators in ecosystem reporting. 
+This repository is intended as a supplement to the manuscript, Spatio-temporal species distribution models reveal dynamic indicators for ecosystem-based fisheries management, for users to fit spatiotemporal species distribution models in VAST. 
