@@ -1,3 +1,1 @@
-
-
-Links to NEFSC data portal 
+README development in progress. Contact author at janelle.badger@noaa.gov with any questions. 
